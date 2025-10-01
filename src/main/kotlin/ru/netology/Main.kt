@@ -5,11 +5,17 @@ import java.time.LocalDateTime
 fun main() {
     val comments = Comments(1)
     val likes = Likes(1)
-    val post = Post(text = "Hello, Wall!", comments = comments, likes = likes)
-    val (id, ownerId, createdBy, date, text) = post
-    println("$id $ownerId $createdBy $date $text")
+    val post0 = Post(text = "Hello, Wall!", comments = comments, likes = likes)
+    val post1 = Post(text = "post1", comments = comments, likes = likes)
+    val post2 = Post(text = "post2", comments = comments, likes = likes)
     val wall = WallService
-    wall.add(post)
+
+    var postWithId = wall.add(post0)
+    var postWithId1 = wall.add(post1)
+    var postWithId2 = wall.add(post2)
+
+    postWithId.text = "Hello, Wall! Edited"
+    wall.update(postWithId)
 
 
 }
@@ -26,13 +32,21 @@ object WallService {
     }
 
     fun update(post: Post): Boolean {
-        TODO()
+        val idToEdit = post.id
+        val result = false
+        for ((index, post) in posts.withIndex()) {
+            if (post.id == idToEdit) {
+                posts[index] = post
+                return result
+            }
+        }
+        return false
     }
 
 }
 
 data class Post(
-    var id: Int? = null, //Идентификатор записи
+    var id: Int = 0, //Идентификатор записи
     val ownerId: Int = 1, //Идентификатор владельца стены, на которой размещена запись
     val fromId: Int = 1, //Идентификатор автора записи (от чьего имени опубликована запись)
     val date: LocalDateTime = LocalDateTime.now(), //Время публикации записи в формате
