@@ -3,19 +3,19 @@ package ru.netology
 import java.time.LocalDateTime
 
 fun main() {
-    val comments = Comments(1)
-    val likes = Likes(1)
-    val post0 = Post(text = "Hello, Wall!", comments = comments, likes = likes)
-    val post1 = Post(text = "post1", comments = comments, likes = likes)
-    val post2 = Post(text = "post2", comments = comments, likes = likes)
-    val wall = WallService
-
-    var postWithId = wall.add(post0)
-    var postWithId1 = wall.add(post1)
-    var postWithId2 = wall.add(post2)
-
-    postWithId.text = "Hello, Wall! Edited"
-    wall.update(postWithId)
+//    val comments = Comments(1)
+//    val likes = Likes(1)
+//    val post0 = Post(text = "Hello, Wall!", comments = comments, likes = likes)
+//    val post1 = Post(text = "post1", comments = comments, likes = likes)
+//    val post2 = Post(text = "post2", comments = comments, likes = likes)
+//    val wall = WallService
+//
+//    var postWithId = wall.add(post0)
+////    var postWithId1 = wall.add(post1)
+////    var postWithId2 = wall.add(post2)
+//
+//    postWithId.text = "Hello, Wall! Edited"
+//    wall.update(postWithId)
 
 
 }
@@ -33,16 +33,21 @@ object WallService {
 
     fun update(post: Post): Boolean {
         val idToEdit = post.id
-        val result = false
+
         for ((index, post) in posts.withIndex()) {
             if (post.id == idToEdit) {
                 posts[index] = post
-                return result
+                return true
             }
         }
         return false
     }
 
+    fun clear() {
+        posts = emptyArray()
+        nextId = 1
+
+    }
 }
 
 data class Post(
