@@ -8,30 +8,41 @@ fun main() {
     val post = Post(text = "Hello, Wall!", comments = comments, likes = likes)
     val (id, ownerId, createdBy, date, text) = post
     println("$id $ownerId $createdBy $date $text")
+    val wall = WallService
+    wall.add(post)
+
 
 }
+
 object WallService {
     private var posts = emptyArray<Post>()
+    private var nextId: Int = 1
 
     fun add(post: Post): Post {
+        post.id = nextId
+        nextId = nextId + 1
         posts += post
         return posts.last()
+    }
+
+    fun update(post: Post): Boolean {
+        TODO()
     }
 
 }
 
 data class Post(
-    val id: Int = 1,
-    val ownerId: Int = 1,
-    val createdBy: Int = 1,
-    val date: LocalDateTime = LocalDateTime.now(),
-    val text: String,
-    val replyOwnerId: Int? = null,
-    val replyPostId: Int? = null,
-    val friendsOnly: Boolean = false,
-    val comments: Comments,
-    val likes: Likes,
-    val views: Int? = null,
+    var id: Int? = null, //Идентификатор записи
+    val ownerId: Int = 1, //Идентификатор владельца стены, на которой размещена запись
+    val fromId: Int = 1, //Идентификатор автора записи (от чьего имени опубликована запись)
+    val date: LocalDateTime = LocalDateTime.now(), //Время публикации записи в формате
+    var text: String, //Текст записи
+    val replyOwnerId: Int? = null, //Идентификатор владельца записи, в ответ на которую была оставлена текущая
+    val replyPostId: Int? = null, //Идентификатор записи, в ответ на которую была оставлена текущая
+    val friendsOnly: Boolean = false, //true если запись была создана с опцией «Только для друзей»
+    val comments: Comments, //Информация о комментариях к записи (поля описаны в датаклассе)
+    var likes: Likes, //Информация о лайках к записи (поля описаны в датаклассе)
+    var views: Int? = null, //Информация о просмотрах записи
 )
 
 
