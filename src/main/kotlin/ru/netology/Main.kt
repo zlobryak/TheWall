@@ -3,26 +3,24 @@ package ru.netology
 import java.time.LocalDateTime
 
 fun main() {
-//    val comments = Comments(1)
-//    val likes = Likes(1)
-//    val post0 = Post(text = "Hello, Wall!", comments = comments, likes = likes)
-//    val post1 = Post(text = "post1", comments = comments, likes = likes)
-//    val post2 = Post(text = "post2", comments = comments, likes = likes)
-//    val wall = WallService
-//
-//    var postWithId = wall.add(post0)
-////    var postWithId1 = wall.add(post1)
-////    var postWithId2 = wall.add(post2)
-//
-//    postWithId.text = "Hello, Wall! Edited"
-//    wall.update(postWithId)
-
-
+/*
+    val comments = Comments(1)
+    val likes = Likes(1)
+    val post0 = Post(text = "Hello, Wall!", comments = comments, likes = likes)
+    val post1 = Post(text = "post1", comments = comments, likes = likes)
+    val post2 = Post(text = "post2", comments = comments, likes = likes)
+    val wall = WallService
+    var postWithId = wall.add(post0)
+    var postWithId1 = wall.add(post1)
+    var postWithId2 = wall.add(post2)
+    postWithId.text = "Hello, Wall! Edited"
+    wall.update(postWithId)
+ */
 }
 
 object WallService {
     private var posts = emptyArray<Post>()
-    private var nextId: Int = 1
+    private var nextId: Int = 0
 
     fun add(post: Post): Post {
         post.id = nextId
@@ -51,7 +49,7 @@ object WallService {
 }
 
 data class Post(
-    var id: Int = 0, //Идентификатор записи
+    var id: Int? = null, //Идентификатор записи
     val ownerId: Int = 1, //Идентификатор владельца стены, на которой размещена запись
     val fromId: Int = 1, //Идентификатор автора записи (от чьего имени опубликована запись)
     val date: LocalDateTime = LocalDateTime.now(), //Время публикации записи в формате
@@ -59,8 +57,8 @@ data class Post(
     val replyOwnerId: Int? = null, //Идентификатор владельца записи, в ответ на которую была оставлена текущая
     val replyPostId: Int? = null, //Идентификатор записи, в ответ на которую была оставлена текущая
     val friendsOnly: Boolean = false, //true если запись была создана с опцией «Только для друзей»
-    val comments: Comments, //Информация о комментариях к записи (поля описаны в датаклассе)
-    var likes: Likes, //Информация о лайках к записи (поля описаны в датаклассе)
+    val comments: Comments, //Информация о комментариях к записи (поля описаны в дата классе)
+    var likes: Likes, //Информация о лайках к записи (поля описаны в дата классе)
     var views: Int? = null, //Информация о просмотрах записи
 )
 
