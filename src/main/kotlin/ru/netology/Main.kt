@@ -27,7 +27,7 @@ object WallService {
     fun add(post: Post): Post {
         post.id = nextId
         nextId = nextId + 1
-        posts += post
+        posts += post.copy()
         return posts.last()
     }
 
@@ -36,7 +36,7 @@ object WallService {
 
         for ((index, post) in posts.withIndex()) {
             if (post.id == idToEdit) {
-                posts[index] = post
+                posts[index] = post.copy()
                 return true
             }
         }
