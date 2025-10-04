@@ -2,12 +2,12 @@ package ru.netology
 
 import java.time.LocalDateTime
 
-interface Attachments {
-    val type: String
+sealed class Attachments {
+    abstract val type: String
 }
 
 //Объект, описывающий видеозапись
-class VideoAttachment(
+data class VideoAttachment(
     override val type: String = "video",
     val id: Int? = null,    // Идентификатор видеозаписи.
     val ownerId: Int?, // Идентификатор владельца видеозаписи.
@@ -15,11 +15,11 @@ class VideoAttachment(
     val description: String? = null, //    string Текст описания видеозаписи.
     val duration: Int? = null, //    integer Длительность ролика в секундах.
     val image: Image, //Изображение обложки.
-) : Attachments
+) : Attachments()
 
 //Объект, описывающий аудиозапись
-class AudioAttachment(
-    override val type: String = "Audio",
+data class AudioAttachment(
+    override val type: String = "audio",
     val id: Int? = null,    // Идентификатор аудиозаписи.
     val ownerId: Int, // Идентификатор владельца аудиозаписи.
     val artist: String? = null, // Исполнитель.
@@ -27,30 +27,30 @@ class AudioAttachment(
     val duration: Int? = null, // Длительность аудиозаписи в секундах.
     val url: String? = null, // Ссылка на mp3.
     val image: Image, //Изображение обложки.
-) : Attachments
+) : Attachments()
 
 //All in all, it's just another brick in the wall
-class AnotherBrickInTheWallAttachment(
-    override val type: String = "Student",
+data class AnotherBrickInTheWallAttachment(
+    override val type: String = "student",
     val id: Int? = null, // Идентификатор студента
     val name: String, //Имя студента
     val surname: String, //Фамилия студента
     val age: Int? = null, //Возраст студента
     val image: Image, //Аватарка студента.
-) : Attachments
+) : Attachments()
 
 //Объект, описывающий геометку
-class PlaceAttachment(
-    override val type: String = "Place",
+data class PlaceAttachment(
+    override val type: String = "place",
     val coordinates: Coordinates
-) : Attachments
+) : Attachments()
 
 //Объект, описывающий файл,
-class FileAttachment(
-    override val type: String = "File",
+data class FileAttachment(
+    override val type: String = "file",
     val id: Int? = null, // Идентификатор файла.
     val ownerId: Int, // Идентификатор пользователя, загрузившего файл.
-    val title: Int, // Название файла.
+    val title: String, // Название файла.
     val size: Int? = null, // Размер файла в байтах.
     val ext: String, // Расширение файла.
     val url: String? = null, // Адрес файла, по которому его можно загрузить.
@@ -67,21 +67,21 @@ class FileAttachment(
 7 — электронные книги;
 8 — неизвестно.
  */
-) : Attachments
+) : Attachments()
 
 //Объект, описывающий стикер,
-class StickerAttachment(
-    override val type: String = "File",
+data class StickerAttachment(
+    override val type: String = "sticker",
     val productId: Int, // Идентификатор набора.
     val stickerId: Int, //Идентификатор стикера.
     val animationUrl: String? = null, // URL анимации стикера.
     val isAllowed: Boolean, //Информация о том, доступен ли стикер.
-) : Attachments
+) : Attachments()
 
 //Дата класс для объектов координат в геометках
 data class Coordinates(
-    val latitude: Int,//географическая широта;
-    val longitude: Int // географическая долгота.
+    val latitude: Double,//географическая широта;
+    val longitude: Double // географическая долгота.
 )
 
 //Дата класс для объектов изображений
