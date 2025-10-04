@@ -3,23 +3,25 @@ package ru.netology
 import java.time.LocalDateTime
 
 fun main() {
-/*
-    val comments = Comments(1)
-    val likes = Likes(1)
-    val post0 = Post(text = "Hello, Wall!", comments = comments, likes = likes)
-    val post1 = Post(text = "post1", comments = comments, likes = likes)
-    val post2 = Post(text = "post2", comments = comments, likes = likes)
-    val wall = WallService
-    var postWithId = wall.add(post0)
-    var postWithId1 = wall.add(post1)
-    var postWithId2 = wall.add(post2)
-    postWithId.text = "Hello, Wall! Edited"
-    wall.update(postWithId)
- */
+    /*
+        val comments = Comments(1)
+        val likes = Likes(1)
+        val post0 = Post(text = "Hello, Wall!", comments = comments, likes = likes)
+        val post1 = Post(text = "post1", comments = comments, likes = likes)
+        val post2 = Post(text = "post2", comments = comments, likes = likes)
+        val wall = WallService
+        var postWithId = wall.add(post0)
+        var postWithId1 = wall.add(post1)
+        var postWithId2 = wall.add(post2)
+        postWithId.text = "Hello, Wall! Edited"
+        wall.update(postWithId)
+     */
 }
 
 object WallService {
-    private var posts = emptyArray<Post>()
+    private var posts = emptyArray<Post>() //Стена для постов
+    private var Attachment = emptyArray<Attachments>() //Массив для хранения вложений
+
     private var nextId: Int = 0
 
     fun add(post: Post): Post {
@@ -41,6 +43,18 @@ object WallService {
         return false
     }
 
+    fun addAttachment(attachment: Attachments?): String {
+        when (attachment?.type) {
+            "video" -> return "video"
+            "audio" -> return "audio"
+            "student" -> return "student"
+            "place" -> return "place"
+            "file" -> return "file"
+            "sticker" -> return "sticker"
+        }
+        return "no such attachment"
+    }
+
     fun clear() {
         posts = emptyArray()
         nextId = 1
@@ -60,6 +74,8 @@ data class Post(
     val comments: Comments, //Информация о комментариях к записи (поля описаны в дата классе)
     var likes: Likes, //Информация о лайках к записи (поля описаны в дата классе)
     var views: Int? = null, //Информация о просмотрах записи
+    val attachment: Attachments? = null //Поле для объекта вложений
+
 )
 
 
