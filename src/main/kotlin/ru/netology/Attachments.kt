@@ -36,7 +36,7 @@ data class AnotherBrickInTheWallAttachment(
     val name: String, //Имя студента
     val surname: String, //Фамилия студента
     val age: Int? = null, //Возраст студента
-    val image: Image, //Аватарка студента.
+    val image: Image? = null //Аватарка студента.
 ) : Attachments()
 
 //Объект, описывающий геометку
@@ -88,5 +88,5 @@ data class Coordinates(
 data class Image(
     val url: String, // ссылка на изображение.
     val height: Int, // высота изображения.
-    val width: Int // ширина изображения.
+    val width: Int// ширина изображения.
 )

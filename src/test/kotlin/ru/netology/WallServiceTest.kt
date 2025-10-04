@@ -1,10 +1,6 @@
 package ru.netology
 
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
-import kotlin.test.BeforeTest
+import kotlin.test.*
 
 class WallServiceTest {
     val wall = WallService
@@ -37,6 +33,12 @@ class WallServiceTest {
         val notAddedPost = Post(id = 10001, text = "No text", comments = comments, likes = likes)
 
         assertFalse { wall.update(notAddedPost) }
+    }
+
+    @Test
+    fun addAttachmentShouldReturnStudent() {
+        val attachment = AnotherBrickInTheWallAttachment("student", id = 1, name = "Floyd", surname = "Pinkerton")
+        assertEquals("student", wall.addAttachment(attachment))
     }
 
 }
