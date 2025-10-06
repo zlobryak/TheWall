@@ -20,11 +20,16 @@ fun main() {
 
 object WallService {
     private var posts = emptyArray<Post>() //Стена для постов
+    private var comments = emptyArray<Comment>() //Массив для хранения комментариев
     private var nextId: Int = 0
+
+    fun createComment(postId: Int, comment: Comment): Comment {
+        TODO()
+    }
 
     fun add(post: Post): Post {
         post.id = nextId
-        nextId = nextId + 1
+        nextId += 1
         posts += post.copy()
         return posts.last()
     }
@@ -69,7 +74,7 @@ data class Post(
     val replyOwnerId: Int? = null, //Идентификатор владельца записи, в ответ на которую была оставлена текущая
     val replyPostId: Int? = null, //Идентификатор записи, в ответ на которую была оставлена текущая
     val friendsOnly: Boolean = false, //true если запись была создана с опцией «Только для друзей»
-    val comments: Comments, //Информация о комментариях к записи (поля описаны в дата классе)
+    val comments: Comment, //Информация о комментариях к записи (поля описаны в дата классе)
     var likes: Likes, //Информация о лайках к записи (поля описаны в дата классе)
     var views: Int? = null, //Информация о просмотрах записи
     val attachments: List<Attachments> = emptyList()
@@ -83,7 +88,7 @@ data class Likes(
     val canPublish: Boolean = true, //информация о том, может ли текущий пользователь сделать репост записи
 )
 
-data class Comments(
+data class Comment(
     val count: Int = 0, //количество комментариев
     val canPost: Boolean = true, // информация о том, может ли текущий пользователь комментировать запись
     val groupsCanPost: Boolean = true,  //информация о том, могут ли сообщества комментировать запись;
