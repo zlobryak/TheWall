@@ -20,8 +20,6 @@ fun main() {
 
 object WallService {
     private var posts = emptyArray<Post>() //Стена для постов
-    private var Attachment = emptyArray<Attachments>() //Массив для хранения вложений
-
     private var nextId: Int = 0
 
     fun add(post: Post): Post {
@@ -74,8 +72,7 @@ data class Post(
     val comments: Comments, //Информация о комментариях к записи (поля описаны в дата классе)
     var likes: Likes, //Информация о лайках к записи (поля описаны в дата классе)
     var views: Int? = null, //Информация о просмотрах записи
-    val attachment: Attachments? = null //Поле для объекта вложений
-
+    val attachments: List<Attachments> = emptyList()
 )
 
 

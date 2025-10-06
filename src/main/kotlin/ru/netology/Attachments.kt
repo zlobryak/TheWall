@@ -9,17 +9,16 @@ sealed class Attachments {
 //Объект, описывающий видеозапись
 data class VideoAttachment(
     override val type: String = "video",
-    val id: Int? = null,    // Идентификатор видеозаписи.
-    val ownerId: Int?, // Идентификатор владельца видеозаписи.
-    val title: String? = null, // Название видеозаписи.
-    val description: String? = null, //    string Текст описания видеозаписи.
-    val duration: Int? = null, //    integer Длительность ролика в секундах.
-    val image: Image, //Изображение обложки.
+    val video: Video
 ) : Attachments()
 
 //Объект, описывающий аудиозапись
 data class AudioAttachment(
     override val type: String = "audio",
+    val audio: Audio
+) : Attachments()
+// Дата класс для аудиофайлов
+data class Audio(
     val id: Int? = null,    // Идентификатор аудиозаписи.
     val ownerId: Int, // Идентификатор владельца аудиозаписи.
     val artist: String? = null, // Исполнитель.
@@ -27,16 +26,12 @@ data class AudioAttachment(
     val duration: Int? = null, // Длительность аудиозаписи в секундах.
     val url: String? = null, // Ссылка на mp3.
     val image: Image, //Изображение обложки.
-) : Attachments()
+)
 
 //All in all, it's just another brick in the wall
 data class AnotherBrickInTheWallAttachment(
     override val type: String = "student",
-    val id: Int? = null, // Идентификатор студента
-    val name: String, //Имя студента
-    val surname: String, //Фамилия студента
-    val age: Int? = null, //Возраст студента
-    val image: Image? = null //Аватарка студента.
+    val student: Student
 ) : Attachments()
 
 //Объект, описывающий геометку
@@ -48,6 +43,55 @@ data class PlaceAttachment(
 //Объект, описывающий файл,
 data class FileAttachment(
     override val type: String = "file",
+    val file: File
+
+) : Attachments()
+
+//Объект, описывающий стикер,
+data class StickerAttachment(
+    override val type: String = "sticker",
+    val sticker: Sticker
+
+) : Attachments()
+// Дата класс стикеров
+data class Sticker(
+    val productId: Int, // Идентификатор набора.
+    val stickerId: Int, //Идентификатор стикера.
+    val animationUrl: String? = null, // URL анимации стикера.
+    val isAllowed: Boolean, //Информация о том, доступен ли стикер.
+)
+
+//Дата класс для объектов координат в геометках
+data class Coordinates(
+    val latitude: Double,//географическая широта;
+    val longitude: Double // географическая долгота.
+)
+
+//Дата класс для объектов изображений
+data class Image(
+    val url: String, // ссылка на изображение.
+    val height: Int, // высота изображения.
+    val width: Int// ширина изображения.
+)
+// Дата класс студентов
+data class Student(
+    val id: Int? = null, // Идентификатор студента
+    val name: String, //Имя студента
+    val surname: String, //Фамилия студента
+    val age: Int? = null, //Возраст студента
+    val image: Image? = null //Аватарка студента.
+)
+// Дата класс видео
+data class Video(
+    val id: Int? = null,    // Идентификатор видеозаписи.
+    val ownerId: Int?, // Идентификатор владельца видеозаписи.
+    val title: String? = null, // Название видеозаписи.
+    val description: String? = null, //    string Текст описания видеозаписи.
+    val duration: Int? = null, //    integer Длительность ролика в секундах.
+    val image: Image, //Изображение обложки.
+)
+// Дата класс фалов
+data class File(
     val id: Int? = null, // Идентификатор файла.
     val ownerId: Int, // Идентификатор пользователя, загрузившего файл.
     val title: String, // Название файла.
@@ -67,26 +111,4 @@ data class FileAttachment(
 7 — электронные книги;
 8 — неизвестно.
  */
-) : Attachments()
-
-//Объект, описывающий стикер,
-data class StickerAttachment(
-    override val type: String = "sticker",
-    val productId: Int, // Идентификатор набора.
-    val stickerId: Int, //Идентификатор стикера.
-    val animationUrl: String? = null, // URL анимации стикера.
-    val isAllowed: Boolean, //Информация о том, доступен ли стикер.
-) : Attachments()
-
-//Дата класс для объектов координат в геометках
-data class Coordinates(
-    val latitude: Double,//географическая широта;
-    val longitude: Double // географическая долгота.
-)
-
-//Дата класс для объектов изображений
-data class Image(
-    val url: String, // ссылка на изображение.
-    val height: Int, // высота изображения.
-    val width: Int// ширина изображения.
 )
