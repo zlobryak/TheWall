@@ -37,7 +37,8 @@ class WallServiceTest {
 
     @Test
     fun addAttachmentShouldReturnStudent() {
-        val attachment = AnotherBrickInTheWallAttachment("student", id = 1, name = "Floyd", surname = "Pinkerton")
+        val student = Student(id = 1, name = "Floyd", surname = "Pinkerton")
+        val attachment = AnotherBrickInTheWallAttachment("student", student)
         assertEquals("student", wall.addAttachment(attachment))
     }
 
