@@ -21,15 +21,27 @@ fun main() {
 object WallService {
     private var posts = emptyArray<Post>() //Стена для постов
     private var comments = emptyArray<Comment>() //Массив для хранения комментариев
-    private var nextId: Int = 0
+    private var nextPostId: Int = 0 //Счетчик для присвоения уникальных id постам
+    private var nextCommentId: Int = 0 //Счетчик для присвоения уникальных id комментариям
 
-    fun createComment(postId: Int, comment: Comment): Comment {
-        TODO()
+
+    fun createComment(postIdToComment: Int, comment: Comment): Comment {
+        for (post in posts) {
+            comment.id = nextCommentId
+            nextCommentId = postIdToComment + 1
+            if (post.id == postIdToComment) {
+                comments += comment.copy()
+                return comments.last()
+            }
+        }
+        throw PostNotFoundException("Post with $postIdToComment is not found")
     }
 
+    class PostNotFoundException(message: String) : RuntimeException(message)
+
     fun add(post: Post): Post {
-        post.id = nextId
-        nextId += 1
+        post.id = nextPostId
+        nextPostId += 1
         posts += post.copy()
         return posts.last()
     }
@@ -60,7 +72,7 @@ object WallService {
 
     fun clear() {
         posts = emptyArray()
-        nextId = 1
+        nextPostId = 1
 
     }
 }
@@ -74,7 +86,6 @@ data class Post(
     val replyOwnerId: Int? = null, //Идентификатор владельца записи, в ответ на которую была оставлена текущая
     val replyPostId: Int? = null, //Идентификатор записи, в ответ на которую была оставлена текущая
     val friendsOnly: Boolean = false, //true если запись была создана с опцией «Только для друзей»
-    val comments: Comment, //Информация о комментариях к записи (поля описаны в дата классе)
     var likes: Likes, //Информация о лайках к записи (поля описаны в дата классе)
     var views: Int? = null, //Информация о просмотрах записи
     val attachments: List<Attachments> = emptyList()
@@ -88,10 +99,17 @@ data class Likes(
     val canPublish: Boolean = true, //информация о том, может ли текущий пользователь сделать репост записи
 )
 
+// Объект, описывающий комментарии на стене, содержит следующие поля:
 data class Comment(
-    val count: Int = 0, //количество комментариев
+    var id: Int? = null, // id комментария
+    val text: String, // Текст комментария
+    val date: LocalDateTime = LocalDateTime.now(), //Дата создания комментария в формате
+    val replyToUser: Int? = null, //Идентификатор пользователя или сообщества,
+                                    // в ответ которому оставлен текущий комментарий (если применимо).
+    var fromId: Int? = null, // Идентификатор автора комментария.
     val canPost: Boolean = true, // информация о том, может ли текущий пользователь комментировать запись
     val groupsCanPost: Boolean = true,  //информация о том, могут ли сообщества комментировать запись;
     val canClose: Boolean = true, // может ли текущий пользователь закрыть комментарии к записи
     val canOpen: Boolean = true, //может ли текущий пользователь открыть комментарии к записи
+    val attachments: List<Attachments> = emptyList() //Массив для вложений
 )
