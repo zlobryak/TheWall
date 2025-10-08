@@ -21,8 +21,10 @@ fun main() {
 object WallService {
     private var posts = emptyArray<Post>() //Стена для постов
     private var comments = emptyArray<Comment>() //Массив для хранения комментариев
+    private var reports = emptyArray<Report>() //Массив для хранения жалоб на комментарии
     private var nextPostId: Int = 0 //Счетчик для присвоения уникальных id постам
     private var nextCommentId: Int = 0 //Счетчик для присвоения уникальных id комментариям
+    private var nextReportId: Int = 0 //Счетчик для присвоения уникальных id жалобам
 
 
     fun createComment(postIdToComment: Int, comment: Comment): Comment {
@@ -39,7 +41,7 @@ object WallService {
 
     class PostNotFoundException(message: String) : RuntimeException(message)
 
-    fun add(post: Post): Post {
+    fun addPost(post: Post): Post {
         post.id = nextPostId
         nextPostId += 1
         posts += post.copy()
@@ -75,6 +77,39 @@ object WallService {
         nextPostId = 1
 
     }
+
+        fun addReport(report: Report): Report {
+        for (post in posts) {
+            report.id = nextReportId
+            nextCommentId = nextReportId + 1
+            if (post.id == report.commentId) {
+                reports += report.copy()
+                return reports.last()
+            }
+        }
+        throw PostNotFoundException("Post with $report.commentId is not found")
+    }
+}
+
+// Жалобы на комменатрии к записям
+data class Report(
+    var id: Int? = null, //Идлентификатор жалобы. Уникальный обязательный паарметр, присваивается функцией
+    val ownerId: Int, //Идентификатор пользователя или сообщества, которому принадлежит комментарий. Обязательный параметр
+    val commentId: Int, //Идентификатор комментария. Обязательный параметр
+    var reason: ReportReason? = null, //TODO Набор вариантов заполнения поля надо ограничить
+)
+
+//Виды причин на жалобу
+enum class ReportReason {
+    SPAM,
+    CHILD_PORNOGRAPHY,
+    EXTREMISM,
+    VIOLENCE,
+    DRUG_PROPAGANDA,
+    ADULT_CONTENT,
+    INSULT,
+    SUICIDE_CALLS;
+    //TODO Выбрасывать код ошибки с текстом
 }
 
 data class Post(
@@ -88,7 +123,7 @@ data class Post(
     val friendsOnly: Boolean = false, //true если запись была создана с опцией «Только для друзей»
     var likes: Likes, //Информация о лайках к записи (поля описаны в дата классе)
     var views: Int? = null, //Информация о просмотрах записи
-    val attachments: List<Attachments> = emptyList()
+    val attachments: List<Attachments> = emptyList(),
 )
 
 
@@ -105,11 +140,11 @@ data class Comment(
     val text: String, // Текст комментария
     val date: LocalDateTime = LocalDateTime.now(), //Дата создания комментария в формате
     val replyToUser: Int? = null, //Идентификатор пользователя или сообщества,
-                                    // в ответ которому оставлен текущий комментарий (если применимо).
+    // в ответ которому оставлен текущий комментарий (если применимо).
     var fromId: Int? = null, // Идентификатор автора комментария.
     val canPost: Boolean = true, // информация о том, может ли текущий пользователь комментировать запись
     val groupsCanPost: Boolean = true,  //информация о том, могут ли сообщества комментировать запись;
     val canClose: Boolean = true, // может ли текущий пользователь закрыть комментарии к записи
     val canOpen: Boolean = true, //может ли текущий пользователь открыть комментарии к записи
-    val attachments: List<Attachments> = emptyList() //Массив для вложений
+    val attachments: List<Attachments> = emptyList(), //Массив для вложений
 )
