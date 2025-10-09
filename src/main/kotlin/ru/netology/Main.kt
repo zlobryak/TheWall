@@ -1,7 +1,5 @@
 package ru.netology
 
-import java.time.LocalDateTime
-
 fun main() {
     /*
         val comments = Comments(1)
@@ -20,11 +18,27 @@ fun main() {
 
 object WallService {
     private var posts = emptyArray<Post>() //Стена для постов
-    private var nextId: Int = 0
+    private var comments = emptyArray<Comment>() //Массив для хранения комментариев
+    private var reports = emptyArray<Report>() //Массив для хранения жалоб на комментарии
+    private var nextPostId: Int = 0 //Счетчик для присвоения уникальных id постам
+    private var nextCommentId: Int = 0 //Счетчик для присвоения уникальных id комментариям
+    private var nextReportId: Int = 0 //Счетчик для присвоения уникальных id жалобам
 
-    fun add(post: Post): Post {
-        post.id = nextId
-        nextId = nextId + 1
+    fun createComment(postIdToComment: Int, comment: Comment): Comment {
+        for (post in posts) {
+            comment.id = nextCommentId
+            nextCommentId = postIdToComment + 1
+            if (post.id == postIdToComment) {
+                comments += comment.copy()
+                return comments.last()
+            }
+        }
+        throw PostNotFoundException("Post with $postIdToComment is not found")
+    }
+
+    fun addPost(post: Post): Post {
+        post.id = nextPostId
+        nextPostId += 1
         posts += post.copy()
         return posts.last()
     }
@@ -55,38 +69,40 @@ object WallService {
 
     fun clear() {
         posts = emptyArray()
-        nextId = 1
+        nextPostId = 1
 
     }
+
+    // Будем получать ID комментария и причину как параметры.
+    // Тогда они могут быть неправильными
+    fun addReport(ownerId: Int, commentId: Int, reason: String): Report {
+        val reason = reportReasonFromString(reason)
+        val report = Report(ownerId = ownerId, commentId = commentId, reason = reason)
+        for (post in posts) {
+            report.id = nextReportId
+            nextCommentId = nextReportId + 1
+            if (post.id == report.commentId) {
+                reports += report.copy()
+                return reports.last()
+            }
+        }
+        throw PostNotFoundException("Post with $report.commentId is not found")
+    }
+
+    // Отдельная функция, которая будет проверять соответствие параметра reason из списка доступных причин
+    fun reportReasonFromString(description: String): ReportReason {
+        for (reason in ReportReason.entries) {
+            if (reason.name.equals(description, ignoreCase = true)) {
+                return reason
+            }
+        }
+        throw NoSuchReasonException(
+            "Недопустимая причина жалобы: '$description'."
+        )
+    }
+
+    class NoSuchReasonException(message: String) : RuntimeException(message)
+    class PostNotFoundException(message: String) : RuntimeException(message)
 }
 
-data class Post(
-    var id: Int? = null, //Идентификатор записи
-    val ownerId: Int = 1, //Идентификатор владельца стены, на которой размещена запись
-    val fromId: Int = 1, //Идентификатор автора записи (от чьего имени опубликована запись)
-    val date: LocalDateTime = LocalDateTime.now(), //Время публикации записи в формате
-    var text: String, //Текст записи
-    val replyOwnerId: Int? = null, //Идентификатор владельца записи, в ответ на которую была оставлена текущая
-    val replyPostId: Int? = null, //Идентификатор записи, в ответ на которую была оставлена текущая
-    val friendsOnly: Boolean = false, //true если запись была создана с опцией «Только для друзей»
-    val comments: Comments, //Информация о комментариях к записи (поля описаны в дата классе)
-    var likes: Likes, //Информация о лайках к записи (поля описаны в дата классе)
-    var views: Int? = null, //Информация о просмотрах записи
-    val attachments: List<Attachments> = emptyList()
-)
 
-
-data class Likes(
-    val count: Int = 0, // число пользователей, которым понравилась запись
-    val userLikes: Boolean = false, //наличие отметки «Мне нравится» от текущего пользователя
-    val canLike: Boolean = true, //информация о том, может ли текущий пользователь поставить отметку «Мне нравится»
-    val canPublish: Boolean = true, //информация о том, может ли текущий пользователь сделать репост записи
-)
-
-data class Comments(
-    val count: Int = 0, //количество комментариев
-    val canPost: Boolean = true, // информация о том, может ли текущий пользователь комментировать запись
-    val groupsCanPost: Boolean = true,  //информация о том, могут ли сообщества комментировать запись;
-    val canClose: Boolean = true, // может ли текущий пользователь закрыть комментарии к записи
-    val canOpen: Boolean = true, //может ли текущий пользователь открыть комментарии к записи
-)
