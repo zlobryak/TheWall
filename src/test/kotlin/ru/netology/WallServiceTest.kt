@@ -3,77 +3,75 @@ package ru.netology
 import kotlin.test.*
 
 class WallServiceTest {
-
-
     val wall = WallService
     val likes = Likes(1)
     val comment = Comment(1, text = "Test text")
-
 
     @BeforeTest
     fun clearBeforeTest() {
         WallService.clear()
     }
 
-//    @Test
-//    fun addReportShouldThrow() {
-//        //TODO Нексколько вариантов ошибок
-//    }
-
     @Test
     fun addReportShouldReturnReportSPAM() {
-        val report = Report(ownerId = 1, commentId = 1, reason = ReportReason.SPAM)
         wall.addPost(post = Post(ownerId = 1, text = "test text", likes = likes))
-        assertEquals(report, wall.addReport(report))
+        val report = wall.addReport(ownerId = 1, commentId = 1, reason = "SPAM")
+        assertEquals(ReportReason.SPAM, report.reason)
     }
 
     @Test
     fun addReportShouldReturnReportCHILD_PORNOGRAPHY() {
-        val report = Report(ownerId = 1, commentId = 1, reason = ReportReason.CHILD_PORNOGRAPHY)
         wall.addPost(post = Post(ownerId = 1, text = "test text", likes = likes))
-        assertEquals(report, wall.addReport(report))
+        val report = wall.addReport(ownerId = 1, commentId = 1, reason = "CHILD_PORNOGRAPHY")
+        assertEquals(ReportReason.CHILD_PORNOGRAPHY, report.reason)
     }
 
     @Test
     fun addReportShouldReturnReportEXTREMISM() {
-        val report = Report(ownerId = 1, commentId = 1, reason = ReportReason.EXTREMISM)
         wall.addPost(post = Post(ownerId = 1, text = "test text", likes = likes))
-        assertEquals(report, wall.addReport(report))
+        val report = wall.addReport(ownerId = 1, commentId = 1, reason = "EXTREMISM")
+        assertEquals(ReportReason.EXTREMISM, report.reason)
     }
 
     @Test
     fun addReportShouldReturnReportVIOLENCE() {
-        val report = Report(ownerId = 1, commentId = 1, reason = ReportReason.VIOLENCE)
         wall.addPost(post = Post(ownerId = 1, text = "test text", likes = likes))
-        assertEquals(report, wall.addReport(report))
+        val report = wall.addReport(ownerId = 1, commentId = 1, reason = "VIOLENCE")
+        assertEquals(ReportReason.VIOLENCE, report.reason)
     }
 
     @Test
     fun addReportShouldReturnReportDRUG_PROPAGANDA() {
-        val report = Report(ownerId = 1, commentId = 1, reason = ReportReason.DRUG_PROPAGANDA)
         wall.addPost(post = Post(ownerId = 1, text = "test text", likes = likes))
-        assertEquals(report, wall.addReport(report))
+        val report = wall.addReport(ownerId = 1, commentId = 1, reason = "DRUG_PROPAGANDA")
+        assertEquals(ReportReason.DRUG_PROPAGANDA, report.reason)
     }
 
     @Test
     fun addReportShouldReturnReportADULT_CONTENT() {
-        val report = Report(ownerId = 1, commentId = 1, reason = ReportReason.ADULT_CONTENT)
         wall.addPost(post = Post(ownerId = 1, text = "test text", likes = likes))
-        assertEquals(report, wall.addReport(report))
+        val report = wall.addReport(ownerId = 1, commentId = 1, reason = "ADULT_CONTENT")
+        assertEquals(ReportReason.ADULT_CONTENT, report.reason)
     }
 
     @Test
     fun addReportShouldReturnReportINSULT() {
-        val report = Report(ownerId = 1, commentId = 1, reason = ReportReason.INSULT)
         wall.addPost(post = Post(ownerId = 1, text = "test text", likes = likes))
-        assertEquals(report, wall.addReport(report))
+        val report = wall.addReport(ownerId = 1, commentId = 1, reason = "INSULT")
+        assertEquals(ReportReason.INSULT, report.reason)
     }
 
     @Test
     fun addReportShouldReturnReportSUICIDE_CALLS() {
-        val report = Report(ownerId = 1, commentId = 1, reason = ReportReason.SUICIDE_CALLS)
         wall.addPost(post = Post(ownerId = 1, text = "test text", likes = likes))
-        assertEquals(report, wall.addReport(report))
+        val report = wall.addReport(ownerId = 1, commentId = 1, reason = "SUICIDE_CALLS")
+        assertEquals(ReportReason.SUICIDE_CALLS, report.reason)
+    }
+
+    @Test(expected = WallService.NoSuchReasonException::class)
+    fun addReportShouldThrowError() {
+        wall.addPost(post = Post(ownerId = 1, text = "test text", likes = likes))
+        wall.addReport(ownerId = 1, commentId = 1, reason = "NO_SUCH_REASON")
     }
 
     @Test

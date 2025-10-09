@@ -17,6 +17,7 @@ data class AudioAttachment(
     override val type: String = "audio",
     val audio: Audio
 ) : Attachments()
+
 // Дата класс для аудиофайлов
 data class Audio(
     val id: Int? = null,    // Идентификатор аудиозаписи.
@@ -53,6 +54,7 @@ data class StickerAttachment(
     val sticker: Sticker
 
 ) : Attachments()
+
 // Дата класс стикеров
 data class Sticker(
     val productId: Int, // Идентификатор набора.
@@ -73,6 +75,7 @@ data class Image(
     val height: Int, // высота изображения.
     val width: Int// ширина изображения.
 )
+
 // Дата класс студентов
 data class Student(
     val id: Int? = null, // Идентификатор студента
@@ -81,6 +84,7 @@ data class Student(
     val age: Int? = null, //Возраст студента
     val image: Image? = null //Аватарка студента.
 )
+
 // Дата класс видео
 data class Video(
     val id: Int? = null,    // Идентификатор видеозаписи.
@@ -90,6 +94,7 @@ data class Video(
     val duration: Int? = null, //    integer Длительность ролика в секундах.
     val image: Image, //Изображение обложки.
 )
+
 // Дата класс фалов
 data class File(
     val id: Int? = null, // Идентификатор файла.
