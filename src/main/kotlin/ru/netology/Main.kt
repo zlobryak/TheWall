@@ -1,6 +1,7 @@
 package ru.netology
 
 fun main() {
+
     /*
         val comments = Comments(1)
         val likes = Likes(1)
