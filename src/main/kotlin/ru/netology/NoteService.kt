@@ -1,37 +1,55 @@
 package ru.netology
 
 //    Методы для работы с заметками.
-class NoteService() {
+object NoteService {
     private var notes = mutableListOf<Notes>() //Все заметки
     private var deletedNotes = mutableListOf<Notes>() // Удаленные заметки
-    private var nextNoteId = 0 //Уникальный Id для заметок
+    private var nextNoteId = 1 //Уникальный Id для заметок
 
     private var comments = mutableListOf<Comment>() //Все комментарии
     private var deletedComments = mutableListOf<Comment>() // Все удаленные комментарии
-    private var nextCommentId = 0 //Уникальный ID для комментариев
+    private var nextCommentId = 1 //Уникальный ID для комментариев
+
+    fun clear() {
+        notes.clear()
+        deletedNotes.clear()
+        nextNoteId = 1
+        comments.clear()
+        deletedComments.clear()
+        nextCommentId = 1
+
+    }
 
     // Создает новую заметку у текущего пользователя.
-    fun addNote(noteTitle: String, noteText: String): Boolean {
-        return notes.add(Notes(nextNoteId++, noteTitle, noteText))
+    fun addNote(noteTitle: String, noteText: String, fromId: Int? = null): Boolean {
+        return notes.add(Notes(nextNoteId++, noteTitle, noteText, fromId = fromId))
     }
 
     // Добавляет новый комментарий к заметке.
     fun createComment(noteToCommentId: Int, text: String): Boolean {
-        return comments.add(Comment(text = text, noteToCommentId = noteToCommentId))
+        val notesIterator = notes.listIterator()
+        while (notesIterator.hasNext()) {
+            val note = notesIterator.next()
+            if (note.id == noteToCommentId) {
+                return comments.add(Comment(nextCommentId++, text = text, noteToCommentId = noteToCommentId))
+            }
+        }
+        throw NoteNotFoundException("Post with $noteToCommentId is not found")
     }
 
     // Удаляет заметку текущего пользователя.
     fun deleteNote(noteToDeleteId: Int): Boolean {
-        while (notes.listIterator().hasNext()) {
-            val note = notes.listIterator().next()
+        val notesIterator = notes.listIterator()
+        while (notesIterator.hasNext()) {
+            val note = notesIterator.next()
             if (note.id == noteToDeleteId) {
-                notes.remove(note)
+                notesIterator.remove()
                 deletedNotes.add(note) //Храним удаленные заметки, для возможности их восстановить
-
-                while (comments.listIterator().hasNext()) {
-                    val comment = comments.listIterator().next()
+                val commentsIterator = comments.listIterator()
+                while (commentsIterator.hasNext()) {
+                    val comment = commentsIterator.next()
                     if (comment.noteToCommentId == note.id) {
-                        comments.remove(comment)
+                        commentsIterator.remove()
                         deletedComments.add(comment) //Храним удаленные комментарии
                     }
                 }
@@ -43,10 +61,11 @@ class NoteService() {
 
     // Удаляет комментарий к заметке.
     fun deleteComment(commentToDeleteId: Int): Boolean {
-        while (comments.listIterator().hasNext()) {
-            val comment: Comment = comments.listIterator().next()
+        val commentIterator = comments.listIterator()
+        while (commentIterator.hasNext()) {
+            val comment: Comment = commentIterator.next()
             if (comment.id == commentToDeleteId) {
-                comments.remove(comment)
+                commentIterator.remove()
                 deletedComments.add(comment) //Храним удаленные заметки, для возможности их восстановить
                 return true
             }
@@ -56,12 +75,14 @@ class NoteService() {
 
     // Редактирует заметку текущего пользователя.
     fun noteToEdit(noteToEditId: Int, text: String): Boolean {
-        while (notes.listIterator().hasNext()) {
-            val note = notes.listIterator().next()
+        val notesIterator = notes.listIterator()
+        while (notesIterator.hasNext()) {
+            val note = notesIterator.next()
             if (note.id == noteToEditId) {
                 note.text = text
+                return true
+
             }
-            return true
         }
         throw NoteNotFoundException("Post with $noteToEditId is not found")
 
@@ -69,25 +90,26 @@ class NoteService() {
 
     // Редактирует указанный комментарий у заметки.
     fun editComment(commentToEditId: Int, text: String): Boolean {
-        while (comments.listIterator().hasNext()) {
-            val comment: Comment = comments.listIterator().next()
+        val commentIterator = comments.listIterator()
+        while (commentIterator.hasNext()) {
+            val comment: Comment = commentIterator.next()
             if (comment.id == commentToEditId) {
                 comment.text = text
+                return true
             }
         }
         throw CommentNotFoundException("Post with $commentToEditId is not found")
     }
 
     // Возвращает список заметок, созданных пользователем.
-    fun get(idList: List<Int>): ArrayList<Notes> {
-        var listOfNotesToReturn = ArrayList<Notes>()
-        while (idList.listIterator().hasNext()) {
-            val id = idList.listIterator().next()
-            while (notes.listIterator().hasNext()) {
-                val note = notes.listIterator().next()
-                if (id == note.id) {
-                    listOfNotesToReturn.add(note)
-                }
+    fun get(fromId: Int): ArrayList<Notes> {
+        val listOfNotesToReturn = ArrayList<Notes>()
+        val notesIterator = notes.listIterator()
+        while (notesIterator.hasNext()) {
+            val note = notesIterator.next()
+            if (note.fromId== fromId) {
+                listOfNotesToReturn.add(note)
+
             }
         }
         return listOfNotesToReturn
@@ -95,8 +117,9 @@ class NoteService() {
 
     // Возвращает заметку по её id.
     fun getByIdv(noteToReturnId: Int): Notes {
-        while (notes.listIterator().hasNext()) {
-            val note = notes.listIterator().next()
+        val notesIterator = notes.listIterator()
+        while (notesIterator.hasNext()) {
+            val note = notesIterator.next()
             if (note.id == noteToReturnId) {
                 return note
             }
@@ -106,30 +129,45 @@ class NoteService() {
 
     // Возвращает список комментариев к заметке.
     fun getComments(noteId: Int): ArrayList<Comment> {
-        var listOfCommentsToReturn = ArrayList<Comment>()
-        while (comments.listIterator().hasNext()) {
-            val comment = comments.listIterator().next()
-            if (noteId == comment.id) {
+        val listOfCommentsToReturn = ArrayList<Comment>()
+        val commentIterator = comments.listIterator()
+        while (commentIterator.hasNext()) {
+            val comment = commentIterator.next()
+            if (noteId == comment.noteToCommentId) {
                 listOfCommentsToReturn.add(comment)
             }
         }
         return listOfCommentsToReturn
     }
 
+    //Возвращает коммент по ID
+    fun getCommentById(commentId: Int): Comment {
+        val commentIterator = comments.listIterator()
+        while (commentIterator.hasNext()) {
+            val comment = commentIterator.next()
+            if (commentId == comment.id) {
+                return comment
+            }
+        }
+        throw CommentNotFoundException("Post with $commentId is not found")
+
+    }
+
     // Восстанавливает удалённый комментарий.
     fun restoreComment(commentToRestoreId: Int): Boolean {
-        while (deletedComments.listIterator().hasNext()) {
-            val comment = deletedComments.listIterator().next()
+        val commentIterator = deletedComments.listIterator()
+        while (commentIterator.hasNext()) {
+            val comment = commentIterator.next()
             if (comment.id == commentToRestoreId) {
-                deletedComments.remove(comment)
-                comments.add(comment)
+                commentIterator.remove() //Удаляем комментарий из списка удаленных
+                comments.add(comment) //Возвращаем удаленный комментарий
                 return true
             }
         }
         throw CommentNotFoundException("Post with $commentToRestoreId is not found")
 
     }
-}
 
-class CommentNotFoundException(error: String) : RuntimeException()
-class NoteNotFoundException(error: String) : RuntimeException()
+    class CommentNotFoundException(error: String) : RuntimeException()
+    class NoteNotFoundException(error: String) : RuntimeException()
+}
