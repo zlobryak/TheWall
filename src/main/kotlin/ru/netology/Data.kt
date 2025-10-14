@@ -29,8 +29,9 @@ data class Likes(
 // Объект, описывающий комментарии на стене, содержит следующие поля:
 data class Comment(
     var id: Int? = null, // id комментария
-    val text: String, // Текст комментария
+    var text: String, // Текст комментария
     val date: LocalDateTime = LocalDateTime.now(), //Дата создания комментария в формате
+    val noteToCommentId: Int? = 0, //Id заметки, к которой оставлен комментарий
     val replyToUser: Int? = null, //Идентификатор пользователя или сообщества, в ответ которому оставлен текущий комментарий (если применимо).
     var fromId: Int? = null, // Идентификатор автора комментария.
     val canPost: Boolean = true, // информация о том, может ли текущий пользователь комментировать запись
@@ -58,4 +59,22 @@ enum class ReportReason(description: String) {
     ADULT_CONTENT("Контент для взрослых"),
     INSULT("Оскорбление"),
     SUICIDE_CALLS("Призывы к суициду");
+}
+
+// Заметки
+data class Notes(
+    val id: Int? = null, // Уникальный Id
+    val title: String, // Заголовок заметки. Обязательный параметр
+    var text: String, // Текст заметки. Обязательный параметр
+    var fromId: Int? = null, // Идентификатор автора заметки
+    val privacy: PrivacyLevel = PrivacyLevel.ALL, // Уровень доступа к заметке. Возможные значения:
+    val commentPrivacy: PrivacyLevel = PrivacyLevel.ALL // Уровень доступа к комментированию заметки. Возможные значения:
+)
+
+// Уровни доступа
+enum class PrivacyLevel {
+    ALL, // все пользователи,
+    OnlyFriends, // только друзья,
+    OnlyFriendsAndTheyFriends, // друзья и друзья друзей,
+    OwnerOnly; // только пользователь.
 }
